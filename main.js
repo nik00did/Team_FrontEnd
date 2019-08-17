@@ -1,7 +1,7 @@
 let canvas;
 let ctx;
 let itemBall;
-let time;
+let timeMoving;
 
 const addBallInArray = ball => {
     if (!ball || typeof ball !== 'object') {
@@ -48,8 +48,26 @@ const onClick = event => {
 };
 
 let moveOneBall = ball => {
-    ball.x += Math.cos(ball.startAngel);
-    ball.y += Math.sin(ball.startAngel);
+
+    if (ball.x + ball.radius < canvas.width && ball.x - ball.radius > 0) {
+        ball.x += Math.cos(ball.startAngel);
+    } else {
+        ball.startAngel = Math.PI - ball.startAngel;
+        ball.x += Math.cos(ball.startAngel);
+    }
+
+    if (ball.y + ball.radius < canvas.height && ball.y - ball.radius > 0) {//fixing
+        ball.y += Math.sin(ball.startAngel);
+    } else {
+        ball.startAngel = Math.PI + ball.startAngel;
+
+        if (ball.y + ball.radius === canvas.height) {
+            ball.y -= Math.sin(ball.startAngel);
+        } else if (ball.y - ball.radius === 0) {
+            ball.y += Math.sin(ball.startAngel);
+        }
+
+    }
 };
 
 const moving = balls => {
@@ -64,7 +82,7 @@ const init = () => {
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
     canvas.onclick = onClick;
-    setInterval(moving, 20, balls);
+    timeMoving = setInterval(moving, 10, balls);
 };
 
 init();
